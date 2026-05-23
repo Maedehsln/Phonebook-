@@ -1,8 +1,7 @@
 // Set localStorage
-let phonBook = JSON.parse(localStorage.getItem("phonBook")) || [];
+loadContactsFromJson();
+let phoneBook = JSON.parse(localStorage.getItem("phoneBook")) || [];
 let editIndex = null;
-
-// خب بالاخره یه پوش زدم
 
 // get element from HTML
 const searchInput = document.querySelector("#searchInput");
@@ -14,6 +13,7 @@ const btnSave = document.querySelector(".save");
 const btnEdit = document.querySelector(".edit");
 const btbCancel = document.querySelector(".cancel");
 const btndelete = document.querySelector(".delete");
+const btnDownload = document.querySelector(".download");
 const table = document.querySelector(".table");
 const tableBody = document.querySelector("#tableBody");
 const userOutput = document.querySelector(".userOutput");
@@ -23,11 +23,36 @@ const checkError = document.querySelector("#Error");
 
 // Save To LocalStorage
 function saveToLocalStorage() {
-  localStorage.setItem("phonBook", JSON.stringify(phonBook));
+  localStorage.setItem("phoneBook", JSON.stringify(phoneBook));
+}
+
+// Load from json file
+function loadContactsFromJson() {
+  fetch("contacts.json")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      localStorage.setItem("phoneBook", JSON.stringify(data));
+      console.log(localStorage.getItem("phoneBook"));
+    })
+    .catch((error) =>
+      console.error(`Error: ${error} (maybe you are running with file url !!!)`)
+    );
+}
+
+// Save Storage to file
+function downloadFile(data, filename = "contacts.json") {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json",
+  });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 //Search input
-
 function setupsearch() {
   if (!searchInput || !searchResult) return;
 
@@ -42,7 +67,7 @@ function setupsearch() {
     }
 
     // contact filter
-    const filtered = phonBook.filter(
+    const filtered = phoneBook.filter(
       (contact) =>
         contact.name.includes(value) ||
         contact.phone.includes(value) ||
@@ -82,7 +107,8 @@ function setupsearch() {
         phoneInput.value = phone;
         companyInput.value = company;
 
-        const originalIndex = phonBook.findIndex((c) => c.phone === phone);
+        // AMK_COMMENT: we can include index in each item to reduce data fetch round-trips.
+        const originalIndex = phoneBook.findIndex((c) => c.phone === phone);
         editIndex = originalIndex;
 
         btnSave.disabled = true;
@@ -105,8 +131,8 @@ function setupsearch() {
 //form for contact information
 
 function localContactToForm(index) {
-  if (index === null || index < 0 || index >= phonBook.length) return;
-  let contact = phonBook[index];
+  if (index === null || index < 0 || index >= phoneBook.length) return;
+  let contact = phoneBook[index];
   userInput.value = contact.name;
   phoneInput.value = contact.phone;
   companyInput.value = contact.company;
@@ -130,46 +156,50 @@ function clearform() {
 //button Save
 
 btnSave.addEventListener("click", function () {
-  const name = userInput.value.trim();
-  const phon = phoneInput.value.trim();
-  const company = companyInput.value.trim();
+  const nameInputValue = userInput.value.trim();
+  const phoneInputValue = phoneInput.value.trim();
+  const companyInputValue = companyInput.value.trim();
   userOutput.innerHTML = "";
   phonOutput.innerHTML = "";
 
-  if (name === "" || phon === "") {
-    if (name === "")
+  if (nameInputValue === "" || phoneInputValue === "") {
+    if (nameInputValue === "")
       checkError.innerHTML = "نام و نام خانوادگی نباید خالی باشد.";
-    if (phon === "") checkError.innerHTML = "شماره تماس نباید خالی باشد.";
-    if (company === "") checkError.innerHTML = "اسم مجموعه نباید خالی باشد.";
+    if (phoneInputValue === "")
+      checkError.innerHTML = "شماره تماس نباید خالی باشد.";
+    if (companyInputValue === "")
+      checkError.innerHTML = "اسم مجموعه نباید خالی باشد.";
     setTimeout(() => {
       checkError.innerHTML = "";
     }, 3000);
     return;
   }
 
-  // duplicate Phon Number
-
+  // duplicate phoneInputValue Number
   let isDuplicate = false;
-  for (let i = 0; i < phonBook.length; i++) {
-    if (phonBook[i].phone === phon) {
-      isDuplicate = true;
-      break;
-    }
-  }
+  // AMK_COMMENT - same as the for loop.
+  isDuplicate = phoneBook.some((contact) => contact.phone === phoneInputValue);
+  //   for (let i = 0; i < phoneBook.length; i++) {
+  //     if (phoneBook[i].phone === phoneInputValue) {
+  //       isDuplicate = true;
+  //       break;
+  //     }
+  //   }
+
   if (isDuplicate) {
-    phonOutput.innerHTML = ".شماره همراه تکراری است";
+    checkError.innerHTML = ".شماره همراه تکراری است";
     setTimeout(() => {
-      phonOutput.innerHTML = "";
+      checkError.innerHTML = "";
     }, 3000);
     return;
   }
 
   const newcontact = {
-    name: name,
-    phone: phon,
-    company: company || "شخصی",
+    name: nameInputValue,
+    phone: phoneInputValue,
+    company: companyInputValue || "شخصی",
   };
-  phonBook.push(newcontact);
+  phoneBook.push(newcontact);
   clearform();
   saveToLocalStorage();
   checkError.innerHTML = "✅ مخاطب با موفقیت ذخیره شد. ";
@@ -189,11 +219,11 @@ btnEdit.addEventListener("click", function () {
     }, 3000);
     return;
   }
-  const name = userInput.value.trim();
-  const phon = phoneInput.value.trim();
-  const company = companyInput.value.trim();
+  const nameInputValue = userInput.value.trim();
+  const phoneInputValue = phoneInput.value.trim();
+  const companyInputValue = companyInput.value.trim();
 
-  if (name === "" || phon === "") {
+  if (nameInputValue === "" || phoneInputValue === "") {
     userOutput.innerHTML = "نام و نام خانوادگی نباید خالی باشد.";
     phonOutput.innerHTML = "شماره تماس نباید خالی باشد.";
     setTimeout(() => {
@@ -202,10 +232,10 @@ btnEdit.addEventListener("click", function () {
     }, 3000);
     return;
   }
-  phonBook[editIndex] = {
-    name: name,
-    phone: phon,
-    company: company || "شخصی",
+  phoneBook[editIndex] = {
+    name: nameInputValue,
+    phone: phoneInputValue,
+    company: companyInputValue || "شخصی",
   };
 
   saveToLocalStorage();
@@ -239,10 +269,10 @@ btndelete.addEventListener("click", function () {
     return;
   }
   const confrimDelete = confirm(
-    `آیا از حذف ${phonBook[editIndex].name} مطمئن هستید ؟`
+    `آیا از حذف ${phoneBook[editIndex].name} مطمئن هستید ؟`
   );
   if (!confrimDelete) return;
-  phonBook.splice(editIndex, 1);
+  phoneBook.splice(editIndex, 1);
   saveToLocalStorage();
   clearform();
   editIndex = null;
@@ -253,6 +283,10 @@ btndelete.addEventListener("click", function () {
   setTimeout(() => {
     checkError.innerHTML = "";
   }, 2000);
+});
+
+btnDownload.addEventListener("click", () => {
+  downloadFile(phoneBook, "contacts.json");
 });
 
 setupsearch();
