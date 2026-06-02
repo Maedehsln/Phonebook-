@@ -60,9 +60,9 @@ function setupsearch() {
     // contact filter
     const filtered = phoneBook.filter(
       (contact) =>
-        contact.name.includes(value) ||
-        contact.phone.includes(value) ||
-        contact.company.includes(value)
+        contact.name.toLowerCase().includes(value) ||
+        contact.phone.toLowerCase().includes(value) ||
+        contact.company.toLowerCase().includes(value)
     );
     //If We hadnt any result
     if (filtered.length === 0) {
@@ -279,5 +279,3 @@ btndelete.addEventListener("click", function () {
 btnDownload.addEventListener("click", () => {
   downloadFile(phoneBook, "contacts.json");
 });
-
-
