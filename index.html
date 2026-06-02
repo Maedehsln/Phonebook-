@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bootstrap-5.3.6-dist/js/bootstrap.js">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/js/all.js">
+
+    <title>Phone Book</title>
+</head>
+<body>
+
+    <div class="search-container">  
+        <input id="searchInput" type="text"  placeholder="جست و جو کنید ." aria-label="جست و جو">
+        <div id="searchResult" class="search-result"></div>
+    </div>
+    <div id="Error"></div>
+    <fieldset id="phonebox">
+      <legend> دفترچه تلفن </legend>
+       <div id="information">
+        <table class="table">
+            <tbody id="tableBody">
+               <tr>
+                   <td>نام و نام خانوادگی : </td>
+                   <td><input type="text" name="user" class="UserName"></td>
+               </tr>
+               <tr>
+                   <td>شماره تماس : </td>
+                   <td><input type="text" name="phon" class="phone"></td>
+               </tr>
+               <tr>
+                   <td>نام مجموعه : </td>
+                   <td><input type="text" name="company" class="company"></td>
+               </tr>
+             </tbody>
+        </table>
+        <div id="buttons">
+           <button class="save"> ثبت </button>
+           <button class="edit"> ویرایش </button>
+           <button class="cancel"> انصراف</button>
+           <div style="width: 100%;"><button class="delete" style="margin-left: 1%;"> حذف</button><button class="download">ذخیره</button></div>
+        </div>
+           <div class="userOutput"></div>
+           <div class="phonOutput"></div>
+           <div class="companyOutput"></div>
+       </div>
+    </fieldset>
+
+<script>
+  const { ipcRenderer } = require('electron')
+  
+  // بجای localStorage.getItem
+  async function loadContacts() {
+    return await ipcRenderer.invoke('load-contacts')
+  }
+  
+  // بجای localStorage.setItem
+  async function saveContacts(contacts) {
+    await ipcRenderer.invoke('save-contacts', contacts)
+  }
+</script>
+
+
+
+    <script src="app.js"></script>
+</body>
+</html>
