@@ -1,36 +1,27 @@
 body{
     background-color: #B0C4DE;
 }
-#phonebox  {
-    background-color:#e1e8f3 ;
-    width: 50%;
-    margin:5% auto;
-    min-height: 60vh;
-}
-
 tr {
     background-color: #e1e8f3 ;
     border: none;
 }
-#information , table{
-   margin-top: 10%;
-   direction: rtl;
-   background-color:#e1e8f3 ;
+#information, table {
+    margin-top: 3%;
+    direction: rtl;
+    background-color: #e1e8f3;
 }
 table input {
     padding: 5%;
+    box-sizing: border-box;
     background-color: inherit;
     border: none;
     border-radius: 5px;
+    font-size:18px;
     border-bottom: 1px solid black;
 } 
-td{
-    font-size: 17px;
-    padding-top: 10%;
-}
-td input{
-    font-size:18px;
-
+td {
+    font-size: 15px;
+    padding-top: 5%;
 }
 legend{
     text-align: right;
@@ -39,23 +30,22 @@ legend{
 }
 .search-container {
     position: relative;
-    width: 100%;
+    width: 90;
     max-width: 400px;
-    direction:rtl;
-    left: 78%;
+    direction: rtl;
+    left: 55%;
 }
-#searchInput{
-    margin: 12% 0 10px 0;
+#searchInput {
+    margin: 5% 0 10px 0;
     width: 60%;
-    padding: 10px 15px;
-    font-size: 18px;
+    padding: 8px 12px;
+    font-size: 16px;
     border: 2px solid #ddd;
     border-radius: 8px;
     outline: none;
-    transition: all 0.3s ease;
     background-color: white;
     color: black;
-    direction:rtl;
+    direction: rtl;
 }
 
 #searchResult{
@@ -72,7 +62,8 @@ legend{
     z-index: 1000;
     display: none;
     margin-top: 5px;
-    width: 67%;
+    width:auto;
+    box-sizing: border-box;
 }
 .search-item {
     padding: 12px 15px;
@@ -97,12 +88,13 @@ legend{
     background-color: #e1e8f3;
     width: 90%;
     max-width: 600px;
-    margin: 4% auto;
+    margin: 2% auto;
     border-radius: 15px;
     border: none;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 #buttons button{
     margin-top:1.5%;
     margin-left: 8%;
@@ -118,8 +110,47 @@ legend{
     flex-direction: column;
     align-items: flex-end;
 }
+#buttons .delete {
+    background-color: #ffe5e5;
+    border-color: #e5a5a5;
+}
+#buttons .save {
+    background-color: #e8f5e9;
+    border-color: #a5d6a7;
+}
 #Error{
-    width: 20%;
+    width: 50%;
     font-size: 20px;
     margin-top: 0;
+}
+.userOutput , .phonOutput , .companyOutput{
+    width: 40%;
+    height: 30px;
+    font-size: 16px;
+    color: crimson;
+}
+.phonInputsRow{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.phone-row{
+    display: flex;
+    align-items: center;
+    gap: 5px;   
+    direction: rtl;
+}
+.add-phone{
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 9px 3px 8px ;
+    border: 1px solid #B0C4DE;
+    border-radius: 5px;
+}
+.remove-phone{
+    cursor: pointer;
+    font-size: 17px;
+    padding: 1px 10px 2px 8px ;
+    border: 1px solid #B0C4DE;
+    border-radius: 5px;
 }
